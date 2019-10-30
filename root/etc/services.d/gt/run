@@ -2,15 +2,12 @@
 
 if [ "$(printenv USE_GT | tr -d '"' | tr -d "'")" == "true" ]; then
 
-    # upgrade green-tunnel silently
-    npm i -g green-tunnel &> /dev/null
-
     command="gt --ip 127.0.0.1 --port 21000"
-    command="$command --dnsType ${GT_DNSTYPE:-https} --dnsServer ${GT_DNSSERVER:-https://cloudflare-dns.com/dns-query}"
+    command="$command --dnsType ${GT_DNSTYPE:-https}"
+    command="$command --dnsServer ${GT_DNSSERVER:-https://cloudflare-dns.com/dns-query}"
 
     echo ""
     echo "running => $command"
-    echo "green-tunnel v$(gt --version) ready"
     echo ""
     
     exec s6-setuidgid abc $command

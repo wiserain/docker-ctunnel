@@ -5,11 +5,7 @@
 # https://github.com/caddyserver/forwardproxy/blob/master/docker-build/gen_caddyfile_and_start.sh
 
 if [ "$(printenv USE_GT | tr -d '"' | tr -d "'")" == "true" ]; then
-    sleep 5
-    while [ "$(pgrep -x node | wc -l)" == "0" ]; do 
-        echo "Waiting for green-tunnel ready. Retrying in 10s ..."
-        sleep 10
-    done
+    s6-svwait ../gt && sleep 3
 fi
 
 CADDYFILE="/config/Caddyfile"
@@ -27,7 +23,7 @@ generate_caddyfile() {
         echo "  probe_resistance ${SECRET_LINK}" >> ${CADDYFILE}
     fi
     if [ "$(printenv USE_GT | tr -d '"' | tr -d "'")" == "true" ]; then
-        echo "  upstream http://localhost:21000" >>${CADDYFILE}
+        echo "  upstream http://localhost:21000" >> ${CADDYFILE}
     fi
     echo "}" >> ${CADDYFILE}
 }

@@ -14,18 +14,33 @@ services:
     restart: always
     network_mode: bridge
     ports:
-      - "${PORT_TO_EXPOSE}:${PROXY_PORT:-8008}"
+      - "${PORT_TO_EXPOSE}:${PROXY_PORT}"
     environment:
       - PUID=${PUID:-911}
       - PGID=${PGID:-911}
       - PROXY_USER=${PROXY_USER}
       - PROXY_PASS=${PROXY_PASS}
+      - PROXY_PORT=${PROXY_PORT:-8008}
 ```
 
-You can access to your password-authenticated proxy server ```http://${PROXY_USER}:${PROXY_PASS}@0.0.0.0:${PROXY_PORT:-8008}``` which has an upstream to the internally running green-tunnel below
+You can access to your password-authenticated proxy server via
+
+```http://${PROXY_USER}:${PROXY_PASS}@0.0.0.0:${PROXY_PORT:-8008}``` 
+
+This service is run by caddy forward-proxy and will relay all your requests to the internally running green-tunnel below
 
 ```bash
-gt --ip 127.0.0.1 --port 21000 --dnsType ${GT_DNSTYPE:-https} --dnsServer ${GT_DNSSERVER:-https://cloudflare-dns.com/dns-query}
+gt --ip 127.0.0.1 --port 21000 \
+    --dnsType ${GT_DNSTYPE:-https} \
+    --dnsServer ${GT_DNSSERVER:-https://cloudflare-dns.com/dns-query}
 ```
 
-If you are familar with ```Caddyfile``` customizing behaviour of caddy-server, you may want your container-volume ```/config``` maped and make your own configuration.
+If you are familar with ```Caddyfile```, you may want your container-volume ```/config``` maped and make your own ```Caddyfile``` to customize behaviour of caddy-server. Default is
+
+```bash
+0.0.0.0:${PROXY_PORT:-8008}
+forwardproxy {
+    basicauth ${PROXY_USER} ${PROXY_PASS}
+    upstream http://localhost:21000
+}
+```
