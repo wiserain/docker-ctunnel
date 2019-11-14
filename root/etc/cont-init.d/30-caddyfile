@@ -1,0 +1,33 @@
+#!/usr/bin/with-contenv bash
+
+# reference
+# https://github.com/caddyserver/forwardproxy
+# https://github.com/caddyserver/forwardproxy/blob/master/docker-build/gen_caddyfile_and_start.sh
+
+CADDYFILE="/config/Caddyfile"
+
+generate_caddyfile() {
+    mkdir -p "$(dirname "${CADDYFILE}")"
+
+    echo "0.0.0.0:${PROXY_PORT:-8008}" > ${CADDYFILE}
+
+    echo "forwardproxy {" >> ${CADDYFILE}
+    if [[ ! -z ${PROXY_USER} ]] && [[ ! -z ${PROXY_PASS} ]]; then
+        echo "  basicauth ${PROXY_USER} ${PROXY_PASS}" >> ${CADDYFILE}
+    fi
+    if [[ "${PROBE_RESISTANT}" = true ]]; then
+        echo "  probe_resistance ${SECRET_LINK}" >> ${CADDYFILE}
+    fi
+    if [ "$(printenv USE_GT | tr -d '"' | tr -d "'")" == "true" ]; then
+        echo "  upstream http://localhost:21000" >> ${CADDYFILE}
+    fi
+    echo "}" >> ${CADDYFILE}
+}
+
+if [ -f "${CADDYFILE}" ]; then
+    echo "** using existing Caddyfile"
+else
+    echo "** generating new Caddyfile"
+    generate_caddyfile
+    chown abc:abc ${CADDYFILE}
+fi

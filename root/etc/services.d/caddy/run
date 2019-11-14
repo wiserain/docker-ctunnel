@@ -8,34 +8,6 @@ if [ "$(printenv USE_GT | tr -d '"' | tr -d "'")" == "true" ]; then
     s6-svwait ../gt && sleep 3
 fi
 
-CADDYFILE="/config/Caddyfile"
-
-generate_caddyfile() {
-    mkdir -p "$(dirname "${CADDYFILE}")"
-
-    echo "0.0.0.0:${PROXY_PORT:-8008}" > ${CADDYFILE}
-
-    echo "forwardproxy {" >> ${CADDYFILE}
-    if [[ ! -z ${PROXY_USER} ]] && [[ ! -z ${PROXY_PASS} ]]; then
-        echo "  basicauth ${PROXY_USER} ${PROXY_PASS}" >> ${CADDYFILE}
-    fi
-    if [[ "${PROBE_RESISTANT}" = true ]]; then
-        echo "  probe_resistance ${SECRET_LINK}" >> ${CADDYFILE}
-    fi
-    if [ "$(printenv USE_GT | tr -d '"' | tr -d "'")" == "true" ]; then
-        echo "  upstream http://localhost:21000" >> ${CADDYFILE}
-    fi
-    echo "}" >> ${CADDYFILE}
-}
-
-if [ -f "${CADDYFILE}" ]; then
-    echo "Using existing Caddyfile"
-else
-    echo "Generating new Caddyfile"
-    generate_caddyfile
-    chown abc:abc ${CADDYFILE}
-fi
-
-command="caddy -agree -conf ${CADDYFILE} -log stdout"
+command="caddy -agree -conf /config/Caddyfile -log stdout"
 echo "running => $command"
 exec s6-setuidgid abc $command

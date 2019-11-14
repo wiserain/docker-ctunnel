@@ -4,6 +4,6 @@ if [ "$(printenv USE_GT | tr -d '"' | tr -d "'")" == "true" ]; then
 
     # update green-tunnel silently
     npm i -g green-tunnel &> /dev/null
-    echo "[cont-init.d] green-tunnel v$(gt --version) ready"
+    echo "** green-tunnel v$(gt --version) ready!"
 
 fi
