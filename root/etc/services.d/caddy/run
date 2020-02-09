@@ -4,7 +4,7 @@
 # https://github.com/caddyserver/forwardproxy
 # https://github.com/caddyserver/forwardproxy/blob/master/docker-build/gen_caddyfile_and_start.sh
 
-if [ "$(printenv USE_GT | tr -d '"' | tr -d "'")" == "true" ]; then
+if [ "$(printenv GT_USE | tr -d '"' | tr -d "'")" == "true" ]; then
     s6-svwait ../gt && sleep 3
 fi
 

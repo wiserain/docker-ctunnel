@@ -3,7 +3,7 @@ LABEL maintainer "wiserain"
 
 # default environment settings
 ENV TZ=Asia/Seoul
-ENV USE_GT=true
+ENV GT_USE=true
 
 # install packages
 RUN \

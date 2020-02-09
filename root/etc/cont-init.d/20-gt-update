@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-if [ "$(printenv USE_GT | tr -d '"' | tr -d "'")" == "true" ]; then
+if [ "$(printenv GT_USE | tr -d '"' | tr -d "'")" == "true" ]; then
 
     # update green-tunnel silently
     npm i -g green-tunnel &> /dev/null
