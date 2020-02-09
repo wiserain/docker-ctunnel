@@ -21,6 +21,7 @@ RUN \
 # add local files
 COPY root/ /
 
+EXPOSE 8008 21000
 VOLUME /config
 WORKDIR /config
 

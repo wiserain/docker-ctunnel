@@ -2,7 +2,7 @@
 
 if [ "$(printenv USE_GT | tr -d '"' | tr -d "'")" == "true" ]; then
 
-    command="gt --ip 127.0.0.1 --port 21000 --system-proxy false"
+    command="gt --ip 0.0.0.0 --port 21000 --system-proxy false"
     command="$command${GT_VERBOSE+ --verbose \"green-tunnel:*\"}"
     command="$command --dnsType ${GT_DNSTYPE:-https}"
     command="$command --dnsServer ${GT_DNSSERVER:-https://cloudflare-dns.com/dns-query}"
