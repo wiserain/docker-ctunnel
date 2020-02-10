@@ -44,7 +44,6 @@ forwardproxy {
     hide_ip
     hide_via
 }
-tls off
 ```
 
 ## Direct connection to green-tunnel
@@ -64,3 +63,8 @@ As green-tunnel is running with ```0.0.0.0:21000```, you can directly access it 
 | ```GT_VERBOSE```  | set ```true``` to run green-tunnel in verbose mode for the purpose of debugging  |  |
 | ```GT_DNSTYPE```  | agrument ```--dns-type``` for [green-tunnel CLI](https://github.com/SadeghHayeri/GreenTunnel#command-line-interface-cli)  | ```https```  |
 | ```GT_DNSSERVER```  | agrument ```--dns-server``` for [green-tunnel CLI](https://github.com/SadeghHayeri/GreenTunnel#command-line-interface-cli)  | ```https://cloudflare-dns.com/dns-query```  |
+
+## TODO
+
+- Suppress log for certificate maintenance
+- Apply http/2 for better performance?

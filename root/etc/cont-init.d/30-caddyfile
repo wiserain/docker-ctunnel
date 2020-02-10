@@ -24,8 +24,6 @@ generate_caddyfile() {
     echo "  hide_ip" >> ${CADDYFILE}
     echo "  hide_via" >> ${CADDYFILE}
     echo "}" >> ${CADDYFILE}
-
-    echo "tls off" >> ${CADDYFILE}
 }
 
 if [ -f "${CADDYFILE}" ]; then
