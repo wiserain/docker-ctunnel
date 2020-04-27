@@ -7,16 +7,15 @@ ENV GT_USE=true
 
 # install packages
 RUN \
- echo "**** install greentunnel ****" && \
- apk add --no-cache npm glib gsettings-desktop-schemas && \
- npm i -g green-tunnel && \
- echo "**** install caddyserver ****" && \
- apk add --no-cache ca-certificates bash curl && \
- curl --fail https://getcaddy.com | bash -s personal http.forwardproxy && \
- echo "**** cleanup ****" && \
- rm -rf \
- 	/tmp/* \
-	/root/.cache
+    echo "**** install green-tunnel ****" && \
+    apk add --no-cache npm glib gsettings-desktop-schemas && \
+    npm i -g green-tunnel && \
+    echo "**** install others ****" && \
+    apk add --no-cache ca-certificates bash curl && \
+    echo "**** cleanup ****" && \
+    rm -rf \
+        /tmp/* \
+        /root/.cache
 
 # add local files
 COPY root/ /

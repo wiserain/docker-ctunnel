@@ -26,6 +26,11 @@ generate_caddyfile() {
     echo "}" >> ${CADDYFILE}
 }
 
+command -v caddy >/dev/null 2>&1 || \
+	{ curl -s https://getcaddy.com | bash -s personal http.forwardproxy >/dev/null 2>&1; }
+
+echo "** caddyserver $(caddy -version) ready!"
+
 if [ -f "${CADDYFILE}" ]; then
     echo "** using existing Caddyfile"
 else
