@@ -26,10 +26,26 @@ generate_caddyfile() {
     echo "}" >> ${CADDYFILE}
 }
 
-command -v caddy >/dev/null 2>&1 || \
-	{ curl -s https://getcaddy.com | bash -s personal http.forwardproxy >/dev/null 2>&1; }
+install_caddy() {
+    echo "** building caddyserver..."
+    apk add --no-cache --quiet --virtual=build-deps go git
+    tmpdir=$(mktemp -d)
+    cd $tmpdir
+    cp /etc/default/caddy.go $tmpdir/main.go
+    export GO111MODULE=on && \
+        go mod init caddy >/dev/null 2>&1 && \
+        go get github.com/caddyserver/caddy@v1 >/dev/null 2>&1
+    echo "** installing caddyserver..."
+    go install >/dev/null 2>&1
+    mv /root/go/bin/caddy /usr/bin/caddy
+    chmod a+x /usr/bin/caddy
+    apk del --no-cache --quiet --purge build-deps
+    rm -rf $tmpdir /root/go /root/.cache
+}
 
-echo "** caddyserver $(caddy -version) ready!"
+command -v caddy >/dev/null 2>&1 || install_caddy
+
+echo "** caddyserver $(caddy -version | cut -d' ' -f2) ready!"
 
 if [ -f "${CADDYFILE}" ]; then
     echo "** using existing Caddyfile"

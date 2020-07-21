@@ -4,7 +4,7 @@ export HOME=/config
 
 if [ "$(printenv GT_USE | tr -d '"' | tr -d "'")" == "true" ]; then
 
-    command="gt --ip 0.0.0.0 --port ${GT_PORT:-21000} --system-proxy false"
+    command="gt --ip 0.0.0.0 --port ${GT_PORT:-21000} --system-proxy false --silent"
     command="$command${GT_VERBOSE+ --verbose \"green-tunnel:*\"}"
     command="$command --dns-type ${GT_DNSTYPE:-https}"
     command="$command --dns-server ${GT_DNSSERVER:-https://cloudflare-dns.com/dns-query}"
