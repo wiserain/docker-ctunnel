@@ -20,8 +20,12 @@ RUN \
 # add local files
 COPY root/ /
 
+RUN chmod a+x /healthcheck.sh
+
 EXPOSE 8008 21000
 VOLUME /config
 WORKDIR /config
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=10s --retries=3 CMD [ "/healthcheck.sh" ]  
 
 ENTRYPOINT ["/init"]
