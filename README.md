@@ -14,7 +14,7 @@ services:
     restart: always
     network_mode: bridge
     ports:
-      - "${PORT_TO_EXPOSE}:8008"
+      - "${PORT_TO_EXPOSE}:${PROXY_PORT:-8008}"
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -24,23 +24,23 @@ services:
 
 You can access to your password-authenticated proxy server via
 
-```http://${PROXY_USER}:${PROXY_PASS}@${DOCKER_HOST}:8008``` 
+```http://${PROXY_USER}:${PROXY_PASS}@${DOCKER_HOST}:${PROXY_PORT:-8008}```
 
 This service is run by caddy forward-proxy and will relay all your requests to the internally running green-tunnel below
 
 ```bash
-gt --ip 0.0.0.0 --port 21000 --system-proxy false \
+gt --ip 0.0.0.0 --port ${GT_PORT:-21000} --system-proxy false \
     --dns-type ${GT_DNSTYPE:-https} \
-    --dns-server ${GT_DNSSERVER:-https://cloudflare-dns.com/dns-query}
+    --dns-server ${GT_DNSSERVER:-https://1.1.1.1/dns-query}
 ```
 
 If you are familar with ```Caddyfile```, you may want your container-volume ```/config``` maped and make your own ```Caddyfile``` to customize behaviour of caddy-server. Default is
 
 ```bash
-0.0.0.0:8008
+0.0.0.0:${PROXY_PORT:-8008}
 forwardproxy {
     basicauth ${PROXY_USER} ${PROXY_PASS}
-    upstream http://localhost:21000
+    upstream http://localhost:${GT_PORT:-21000}
     hide_ip
     hide_via
 }
@@ -57,14 +57,15 @@ As green-tunnel is running with ```0.0.0.0:21000```, you can directly access it 
 | ```PUID``` / ```PGID```  | uid and gid for running an app  | ```911``` / ```911```  |
 | ```TZ```  | timezone  | ```Asia/Seoul```  |
 | ```PROXY_USER``` / ```PROXY_PASS```  | required both to activate proxy authentication   |  |
-| ```PROXY_PORT```  | to run caddy forward-proxy in different port  | ```8008``` |
+| ```PROXY_PORT```  | to run caddy forward-proxy in a different port  | ```8008``` |
+| ```PROXY_VERBOSE```  | append ```-log stdout``` to caddy server cmd  |  |
 | ```GT_USE```  | set ```false``` to turn off green-tunnel  | ```true``` |
 | ```GT_PORT```  | to run green-tunnel in different port  | ```21000```  |
 | ```GT_VERBOSE```  | set ```true``` to run green-tunnel in verbose mode for the purpose of debugging  |  |
 | ```GT_DNSTYPE```  | agrument ```--dns-type``` for [green-tunnel CLI](https://github.com/SadeghHayeri/GreenTunnel#command-line-interface-cli)  | ```https```  |
-| ```GT_DNSSERVER```  | agrument ```--dns-server``` for [green-tunnel CLI](https://github.com/SadeghHayeri/GreenTunnel#command-line-interface-cli)  | ```https://cloudflare-dns.com/dns-query```  |
+| ```GT_DNSSERVER```  | agrument ```--dns-server``` for [green-tunnel CLI](https://github.com/SadeghHayeri/GreenTunnel#command-line-interface-cli)  | ```https://1.1.1.1/dns-query```  |
 
 ## TODO
 
-- Suppress log for certificate maintenance
-- Apply http/2 for better performance?
+- [ ] Suppress log for certificate maintenance
+- [ ]Apply http/2 for better performance?

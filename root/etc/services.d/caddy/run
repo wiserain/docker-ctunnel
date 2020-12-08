@@ -4,10 +4,8 @@
 # https://github.com/caddyserver/forwardproxy
 # https://github.com/caddyserver/forwardproxy/blob/master/docker-build/gen_caddyfile_and_start.sh
 
-if [ "$(printenv GT_USE | tr -d '"' | tr -d "'")" == "true" ]; then
-    s6-svwait ../gt && sleep 3
-fi
+command="caddy -agree -conf /config/Caddyfile"
+command="$command${PROXY_VERBOSE+ -log stdout}"
 
-command="caddy -agree -conf /config/Caddyfile -log stdout"
 echo "running => $command"
 exec s6-setuidgid abc $command

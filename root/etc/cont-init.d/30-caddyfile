@@ -28,7 +28,7 @@ generate_caddyfile() {
 
 install_caddy() {
     echo "** building caddyserver..."
-    apk add --no-cache --quiet --virtual=build-deps go git
+    apk add --no-cache --quiet -X http://dl-cdn.alpinelinux.org/alpine/edge/community --virtual=build-deps go git
     tmpdir=$(mktemp -d)
     cd $tmpdir
     cp /etc/default/caddy.go $tmpdir/main.go
