@@ -31,7 +31,7 @@ jobs:
           dockerFile: Dockerfile
           publish: true
           platform: linux/amd64,linux/arm/v7,linux/arm64
-          dockerHubUser: ${{ env.DOCKERHUB_USER }}
+          dockerUser: ${{ env.DOCKERHUB_USER }}
           dockerPassword: ${{ secrets.DOCKERHUB_PASS }}
       -
         name: push README to Dockerhub
