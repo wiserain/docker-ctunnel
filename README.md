@@ -68,4 +68,4 @@ As green-tunnel is running with ```0.0.0.0:21000```, you can directly access it 
 ## TODO
 
 - [ ] Suppress log for certificate maintenance
-- [ ]Apply http/2 for better performance?
+- [ ] Apply http/2 for better performance?
