@@ -1,9 +1,11 @@
 #!/usr/bin/with-contenv bash
 
-if [ "$(printenv GT_USE | tr -d '"' | tr -d "'")" == "true" ]; then
+if [ "$(printenv GT_ENABLED | tr -d '"' | tr -d "'")" == "true" ]; then
 
-    # update green-tunnel silently
-    npm i -g green-tunnel &> /dev/null
+    if [ "$(printenv GT_UPDATE | tr -d '"' | tr -d "'")" == "true" ]; then
+        echo "** updating green-tunnel ..."
+        npm i -g green-tunnel &> /dev/null
+    fi
 
     # temporary fix for MODULE_NOT_FOUND error
     filename="/usr/lib/node_modules/green-tunnel/src/utils/analytics.js"

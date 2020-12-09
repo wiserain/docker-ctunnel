@@ -1,9 +1,28 @@
-FROM lsiobase/alpine:3.12
+ARG ALPINE_VER=3.12
+FROM alpine:${ALPINE_VER} AS builder
+
+COPY caddy.go /tmp/caddy/
+
+RUN \
+    echo "**** building caddyserver ****" && \
+    apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/community \
+        go \
+        git && \
+    cd /tmp/caddy && \
+    export GO111MODULE=on && \
+    go mod init caddy && \
+    go get github.com/caddyserver/caddy@v1 && \
+    echo "**** installing caddyserver ****" && \
+    go install
+
+
+FROM lsiobase/alpine:${ALPINE_VER}
 LABEL maintainer "wiserain"
 
 # default environment settings
 ENV TZ=Asia/Seoul
-ENV GT_USE=true
+ENV GT_ENABLED=true
+ENV GT_UPDATE=false
 
 # install packages
 RUN \
@@ -20,7 +39,10 @@ RUN \
 # add local files
 COPY root/ /
 
-RUN chmod a+x /healthcheck.sh
+# install caddy binary
+COPY --from=builder /root/go/bin/caddy /usr/bin/
+
+RUN chmod a+x /healthcheck.sh /usr/bin/caddy
 
 EXPOSE 8008 21000
 VOLUME /config
