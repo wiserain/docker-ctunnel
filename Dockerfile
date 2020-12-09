@@ -5,7 +5,10 @@ COPY caddy.go /tmp/caddy/
 
 RUN \
     echo "**** building caddyserver ****" && \
-    apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/community \
+    apk add --no-cache --upgrade \
+        -X http://dl-cdn.alpinelinux.org/alpine/edge/community \
+        -X http://dl-cdn.alpinelinux.org/alpine/edge/main \
+        -X http://dl-cdn.alpinelinux.org/alpine/edge/testing \
         go \
         git && \
     cd /tmp/caddy && \
