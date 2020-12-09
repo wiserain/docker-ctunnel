@@ -59,7 +59,8 @@ As green-tunnel is running with ```0.0.0.0:21000```, you can directly access it 
 | ```PROXY_USER``` / ```PROXY_PASS```  | required both to activate proxy authentication   |  |
 | ```PROXY_PORT```  | to run caddy forward-proxy in a different port  | ```8008``` |
 | ```PROXY_VERBOSE```  | append ```-log stdout``` to caddy server cmd  |  |
-| ```GT_USE```  | set ```false``` to turn off green-tunnel  | ```true``` |
+| ```GT_ENABLED```  | set ```false``` to disable green-tunnel  | ```true``` |
+| ```GT_UPDATE```  | set ```true``` to update green-tunnel on startup  | ```false``` |
 | ```GT_PORT```  | to run green-tunnel in different port  | ```21000```  |
 | ```GT_VERBOSE```  | set ```true``` to run green-tunnel in verbose mode for the purpose of debugging  |  |
 | ```GT_DNSTYPE```  | agrument ```--dns-type``` for [green-tunnel CLI](https://github.com/SadeghHayeri/GreenTunnel#command-line-interface-cli)  | ```https```  |
