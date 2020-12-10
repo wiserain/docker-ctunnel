@@ -56,6 +56,7 @@ As green-tunnel is running with ```0.0.0.0:21000```, you can directly access it 
 |---|---|---|
 | ```PUID``` / ```PGID```  | uid and gid for running an app  | ```911``` / ```911```  |
 | ```TZ```  | timezone  | ```Asia/Seoul```  |
+| ```PROXY_ENABLED```  | set ```false``` to disable caddy | ```true``` |
 | ```PROXY_USER``` / ```PROXY_PASS```  | required both to activate proxy authentication   |  |
 | ```PROXY_PORT```  | to run caddy forward-proxy in a different port  | ```8008``` |
 | ```PROXY_VERBOSE```  | append ```-log stdout``` to caddy server cmd  |  |

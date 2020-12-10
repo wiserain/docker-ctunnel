@@ -26,12 +26,16 @@ generate_caddyfile() {
     echo "}" >> ${CADDYFILE}
 }
 
-echo "** caddyserver $(caddy -version | cut -d' ' -f2) ready!"
+if [ "$(printenv PROXY_ENABLED | tr -d '"' | tr -d "'")" == "true" ]; then
 
-if [ -f "${CADDYFILE}" ]; then
-    echo "** using existing Caddyfile"
-else
-    echo "** generating new Caddyfile"
-    generate_caddyfile
-    chown abc:abc ${CADDYFILE}
+    echo "** caddyserver $(caddy -version | cut -d' ' -f2) ready!"
+
+    if [ -f "${CADDYFILE}" ]; then
+        echo "** using existing Caddyfile"
+    else
+        echo "** generating new Caddyfile"
+        generate_caddyfile
+        chown abc:abc ${CADDYFILE}
+    fi
+
 fi
