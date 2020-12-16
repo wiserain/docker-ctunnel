@@ -1,16 +1,11 @@
 ARG ALPINE_VER=3.12
-FROM alpine:${ALPINE_VER} AS builder
+ARG GOLANG_VER=1.15
+FROM golang:${GOLANG_VER}-alpine${ALPINE_VER} AS builder
 
 COPY caddy.go /tmp/caddy/
 
 RUN \
     echo "**** building caddyserver ****" && \
-    apk add --no-cache --upgrade \
-        -X http://dl-cdn.alpinelinux.org/alpine/edge/community \
-        -X http://dl-cdn.alpinelinux.org/alpine/edge/main \
-        -X http://dl-cdn.alpinelinux.org/alpine/edge/testing \
-        go \
-        git && \
     cd /tmp/caddy && \
     export GO111MODULE=on && \
     go mod init caddy && \
@@ -44,7 +39,7 @@ RUN \
 COPY root/ /
 
 # install caddy binary
-COPY --from=builder /root/go/bin/caddy /usr/bin/
+COPY --from=builder /go/bin/caddy /usr/bin/
 
 RUN chmod a+x /healthcheck.sh /usr/bin/caddy
 
