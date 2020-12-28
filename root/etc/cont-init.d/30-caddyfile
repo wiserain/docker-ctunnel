@@ -18,7 +18,7 @@ generate_caddyfile() {
     if [[ "${PROBE_RESISTANT}" = true ]]; then
         echo "  probe_resistance ${SECRET_LINK}" >> ${CADDYFILE}
     fi
-    if [ "$(printenv GT_USE | tr -d '"' | tr -d "'")" == "true" ]; then
+    if [ "$(printenv GT_ENABLED | tr -d '"' | tr -d "'")" == "true" ]; then
         echo "  upstream http://localhost:${GT_PORT:-21000}" >> ${CADDYFILE}
     fi
     echo "  hide_ip" >> ${CADDYFILE}
