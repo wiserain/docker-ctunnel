@@ -14,7 +14,7 @@ RUN \
     go install
 
 
-FROM lsiobase/alpine:${ALPINE_VER}
+FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VER}
 LABEL maintainer "wiserain"
 
 # default environment settings
