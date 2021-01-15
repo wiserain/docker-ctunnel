@@ -5,7 +5,7 @@ COPY caddy.go /tmp/caddy/
 
 RUN \
     echo "**** building caddyserver ****" && \
-    apk add --no-caceh \
+    apk add --no-cache \
         go \
         git && \
     cd /tmp/caddy && \
