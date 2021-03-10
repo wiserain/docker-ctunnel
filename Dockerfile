@@ -17,7 +17,8 @@ RUN \
 
 
 FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VER}
-LABEL maintainer "wiserain"
+LABEL maintainer="wiserain"
+LABEL org.opencontainers.image.source https://github.com/wiserain/docker-ctunnel
 
 # default environment settings
 ENV TZ=Asia/Seoul
