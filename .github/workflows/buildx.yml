@@ -85,7 +85,7 @@ jobs:
           short-description: ${{ steps.vars.outputs.github_desc }}
       -
         name: Notification
-        uses: sarisia/actions-status-discord@v1
+        uses: sarisia/actions-status-discord@v1.8.5
         if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
@@ -109,7 +109,7 @@ jobs:
           dockerPassword: ${{ secrets.DOCKERHUB_PASS }}
       -
         name: Notification for PR
-        uses: sarisia/actions-status-discord@v1
+        uses: sarisia/actions-status-discord@v1.8.5
         if: always() && (github.event_name == 'pull_request')
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
@@ -184,7 +184,7 @@ jobs:
           push: true
       -
         name: Notification
-        uses: sarisia/actions-status-discord@v1
+        uses: sarisia/actions-status-discord@v1.8.5
         if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
