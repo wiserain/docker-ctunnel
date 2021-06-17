@@ -1,4 +1,4 @@
-ARG ALPINE_VER=3.13
+ARG ALPINE_VER=3.14
 FROM alpine:${ALPINE_VER} AS builder
 
 COPY caddy.go /tmp/caddy/
@@ -11,6 +11,7 @@ RUN \
     cd /tmp/caddy && \
     export GO111MODULE=on && \
     go mod init caddy && \
+    go mod tidy && \
     go get github.com/caddyserver/caddy@v1 && \
     echo "**** installing caddyserver ****" && \
     go install
@@ -21,10 +22,10 @@ LABEL maintainer="wiserain"
 LABEL org.opencontainers.image.source https://github.com/wiserain/docker-ctunnel
 
 # default environment settings
-ENV TZ=Asia/Seoul
-ENV GT_ENABLED=true
-ENV GT_UPDATE=false
-ENV PROXY_ENABLED=true
+ENV TZ=Asia/Seoul \
+    GT_ENABLED=true \
+    GT_UPDATE=false \
+    PROXY_ENABLED=true
 
 # install packages
 RUN \
