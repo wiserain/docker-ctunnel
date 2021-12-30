@@ -1,13 +1,12 @@
-ARG ALPINE_VER=3.14
-FROM alpine:${ALPINE_VER} AS builder
+ARG ALPINE_VER=3.15
+FROM golang:1.16-alpine${ALPINE_VER} AS builder
 
 COPY caddy.go /tmp/caddy/
 
+ENV GOBIN=/bar/usr/local/bin
+
 RUN \
     echo "**** building caddyserver ****" && \
-    apk add --no-cache \
-        go \
-        git && \
     cd /tmp/caddy && \
     export GO111MODULE=on && \
     go mod init caddy && \
@@ -15,6 +14,9 @@ RUN \
     go get github.com/caddyserver/caddy@v1 && \
     echo "**** installing caddyserver ****" && \
     go install
+
+# add local files
+COPY root/ /bar/
 
 
 FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VER}
@@ -27,6 +29,8 @@ ENV TZ=Asia/Seoul \
     GT_UPDATE=false \
     PROXY_ENABLED=true
 
+COPY --from=builder /bar/ /
+
 # install packages
 RUN \
     echo "**** install green-tunnel ****" && \
@@ -34,18 +38,12 @@ RUN \
     npm i -g green-tunnel && \
     echo "**** install others ****" && \
     apk add --no-cache ca-certificates bash curl && \
+    echo "**** permissions ****" && \
+    chmod a+x /healthcheck.sh && \
     echo "**** cleanup ****" && \
     rm -rf \
         /tmp/* \
         /root/.cache
-
-# add local files
-COPY root/ /
-
-# install caddy binary
-COPY --from=builder /root/go/bin/caddy /usr/bin/
-
-RUN chmod a+x /healthcheck.sh /usr/bin/caddy
 
 EXPOSE 8008 21000
 VOLUME /config
