@@ -7,12 +7,6 @@ if [ "$(printenv GT_ENABLED | tr -d '"' | tr -d "'")" == "true" ]; then
         npm i -g green-tunnel &> /dev/null
     fi
 
-    # temporary fix for MODULE_NOT_FOUND error
-    filename="/usr/lib/node_modules/green-tunnel/src/utils/analytics.js"
-    [ -f "${filename}" ] && \
-        sed -i "s/import uuid from 'uuid\/v4';/import { v4 as uuid } from 'uuid';/" \
-            "${filename}"
-
     echo "** green-tunnel v$(gt --version) ready!"
 
 fi
