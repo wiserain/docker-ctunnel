@@ -38,4 +38,7 @@ if [ "$(printenv PROXY_ENABLED | tr -d '"' | tr -d "'")" == "true" ]; then
         chown abc:abc ${CADDYFILE}
     fi
 
+else
+    # remove unused services
+    rm -rf /etc/services.d/caddy
 fi

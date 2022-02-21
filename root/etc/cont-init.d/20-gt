@@ -9,4 +9,7 @@ if [ "$(printenv GT_ENABLED | tr -d '"' | tr -d "'")" == "true" ]; then
 
     echo "** green-tunnel v$(gt --version) ready!"
 
+else
+    # remove unused services
+    rm -rf /etc/services.d/gt
 fi

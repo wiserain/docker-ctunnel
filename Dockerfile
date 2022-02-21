@@ -24,7 +24,9 @@ LABEL maintainer="wiserain"
 LABEL org.opencontainers.image.source https://github.com/wiserain/docker-ctunnel
 
 # default environment settings
-ENV TZ=Asia/Seoul \
+ENV \
+    S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
+    TZ=Asia/Seoul \
     GT_ENABLED=true \
     GT_UPDATE=false \
     PROXY_ENABLED=true

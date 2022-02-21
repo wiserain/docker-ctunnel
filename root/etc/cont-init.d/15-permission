@@ -1,9 +1,11 @@
 #!/usr/bin/with-contenv bash
 
-# make folders
-mkdir -p \
-        /config
+if [ "$(printenv GT_ENABLED | tr -d '"' | tr -d "'")" != "true" ] && \
+    [ "$(printenv PROXY_ENABLED | tr -d '"' | tr -d "'")" != "true" ]; then
+    echo "** ERROR: No services available"
+    exit 1
+fi
 
 # permissions
 chown -R abc:abc \
-        /config
+    /config
