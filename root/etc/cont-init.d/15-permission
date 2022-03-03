@@ -1,8 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-if [ "$(printenv GT_ENABLED | tr -d '"' | tr -d "'")" != "true" ] && \
-    [ "$(printenv PROXY_ENABLED | tr -d '"' | tr -d "'")" != "true" ]; then
-    echo "** ERROR: No services available"
+if [ "${GT_ENABLED}" != "true" ] && [ "${PROXY_ENABLED}" != "true" ]; then
+    echo "*** ERROR: No services available"
     exit 1
 fi
 

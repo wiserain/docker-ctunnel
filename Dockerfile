@@ -41,7 +41,7 @@ RUN \
     echo "**** install others ****" && \
     apk add --no-cache ca-certificates bash curl && \
     echo "**** permissions ****" && \
-    chmod a+x /healthcheck.sh && \
+    chmod a+x /usr/local/bin/* && \
     echo "**** cleanup ****" && \
     rm -rf \
         /tmp/* \
@@ -52,6 +52,6 @@ VOLUME /config
 WORKDIR /config
 
 HEALTHCHECK --interval=10m --timeout=30s --start-period=10s --retries=3 \
-    CMD /healthcheck.sh
+    CMD /usr/local/bin/healthcheck
 
 ENTRYPOINT ["/init"]

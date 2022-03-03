@@ -1,15 +1,12 @@
 #!/usr/bin/with-contenv bash
 
-if [ "$(printenv GT_ENABLED | tr -d '"' | tr -d "'")" == "true" ]; then
+if [ "${GT_ENABLED}" == "true" ]; then
 
-    if [ "$(printenv GT_UPDATE | tr -d '"' | tr -d "'")" == "true" ]; then
-        echo "** updating green-tunnel ..."
+    if [ "${GT_UPDATE}" == "true" ]; then
+        echo "*** updating green-tunnel ..."
         npm i -g green-tunnel &> /dev/null
     fi
 
-    echo "** green-tunnel v$(gt --version) ready!"
+    echo "*** green-tunnel v$(gt --version) ready!"
 
-else
-    # remove unused services
-    rm -rf /etc/services.d/gt
 fi

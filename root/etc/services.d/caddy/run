@@ -4,12 +4,13 @@
 # https://github.com/caddyserver/forwardproxy
 # https://github.com/caddyserver/forwardproxy/blob/master/docker-build/gen_caddyfile_and_start.sh
 
-if [ "$(printenv PROXY_ENABLED | tr -d '"' | tr -d "'")" == "true" ]; then
-
-    command="caddy -agree -conf /config/Caddyfile"
-    command="$command${PROXY_VERBOSE+ -log stdout}"
-
-    echo "running => $command"
-    exec s6-setuidgid abc $command
-
+if [ "${PROXY_ENABLED}" != "true" ]; then
+    s6-svc -d .
+    exit 0
 fi
+
+command="caddy -agree -conf /config/Caddyfile"
+command="$command${PROXY_VERBOSE+ -log stdout}"
+
+echo "*** executing => $command"
+exec s6-setuidgid abc $command
