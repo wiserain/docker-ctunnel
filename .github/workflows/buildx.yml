@@ -11,6 +11,7 @@ on:
 env:
   DOCKERHUB_USER: wiserain
   IMAGE_NAME: wiserain/ctunnel
+  ALPINE_VER: '3.15'
 
 jobs:
   buildx:
@@ -34,6 +35,8 @@ jobs:
           file: Dockerfile
           tags: ${{ env.IMAGE_NAME }}:testing
           platforms: linux/amd64,linux/arm/v7,linux/arm64
+          build-args: |
+            ALPINE_VER=${{ env.ALPINE_VER }}
       - 
         name: Load Built Image and Get Variables
         id: vars
@@ -41,14 +44,18 @@ jobs:
           docker buildx build \
             -t ${{ env.IMAGE_NAME }}:testing \
             --platform=linux/amd64 \
+            --build-arg ALPINE_VER=${{ env.ALPINE_VER }} \
             --load \
             .
           CID=$(docker run -d ${{ env.IMAGE_NAME }}:testing)
-          VER=$(docker exec $CID npm view green-tunnel version 2>/dev/null)
+          VER_FULL=$(docker exec $CID gt --version 2>/dev/null)
+          echo "VER_FULL=$VER_FULL" >> $GITHUB_ENV
           docker rm -f $CID
-          echo ::set-output name=app_ver::${VER}
+          VER_MINOR=$(echo $VER_FULL | cut -d. -f-2)
+          echo "VER_MINOR=$VER_MINOR" >> $GITHUB_ENV
+          VER_MAJOR=$(echo $VER_FULL | cut -d. -f-1)
+          echo "VER_MAJOR=$VER_MAJOR" >> $GITHUB_ENV
           echo ::set-output name=github_desc::$(curl -sX GET https://api.github.com/repos/${GITHUB_REPOSITORY} | jq -r .description)
-          echo ::set-output name=github_branch::${GITHUB_REF#refs/heads/}
       -
         name: Login to docker.io
         uses: docker/login-action@v1 
@@ -70,10 +77,16 @@ jobs:
           file: Dockerfile
           tags: |
             ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.app_ver }}
+            ${{ env.IMAGE_NAME }}:${{ env.VER_FULL }}
+            ${{ env.IMAGE_NAME }}:${{ env.VER_MINOR }}
+            ${{ env.IMAGE_NAME }}:${{ env.VER_MAJOR }}
             ghcr.io/${{ env.IMAGE_NAME }}:latest
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.app_ver }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VER_FULL }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VER_MINOR }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VER_MAJOR }}
           platforms: linux/amd64,linux/arm/v7,linux/arm64
+          build-args: |
+            ALPINE_VER=${{ env.ALPINE_VER }}
           push: true
       -
         name: Update Dockerhub description
@@ -92,33 +105,13 @@ jobs:
           status: ${{ job.status }}
           description: |
             ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.app_ver }}
+            ${{ env.IMAGE_NAME }}:${{ env.VER_FULL }}
+            ${{ env.IMAGE_NAME }}:${{ env.VER_MINOR }}
+            ${{ env.IMAGE_NAME }}:${{ env.VER_MAJOR }}
             ghcr.io/${{ env.IMAGE_NAME }}:latest
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.app_ver }}
-      - 
-        name: Buildx for PR
-        if: github.event_name == 'pull_request'
-        uses: ilteoood/docker_buildx@1.1.0
-        with:
-          imageName: ${{ env.DOCKERHUB_USER }}/${{ env.DOCKERHUB_REPO }}
-          tag: testing,testing-pr-${{ github.event.pull_request.number }}
-          dockerFile: Dockerfile
-          publish: true
-          platform: linux/amd64,linux/arm/v7,linux/arm64
-          dockerUser: ${{ env.DOCKERHUB_USER }}
-          dockerPassword: ${{ secrets.DOCKERHUB_PASS }}
-      -
-        name: Notification for PR
-        uses: sarisia/actions-status-discord@v1
-        if: always() && (github.event_name == 'pull_request')
-        with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          status: ${{ job.status }}
-          description: |
-            Image: ${{ env.DOCKERHUB_USER }}/${{ env.DOCKERHUB_REPO }}
-            Tags:
-              - testing
-              - testing-pr-${{ github.event.pull_request.number }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VER_FULL }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VER_MINOR }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VER_MAJOR }}
 
   buildx-on-pr:
     runs-on: ubuntu-20.04
@@ -141,21 +134,8 @@ jobs:
           file: Dockerfile
           tags: ${{ env.IMAGE_NAME }}:testing
           platforms: linux/amd64,linux/arm/v7,linux/arm64
-      - 
-        name: Load Built Image and Get Variables
-        id: vars
-        run: |
-          docker buildx build \
-            -t ${{ env.IMAGE_NAME }}:testing \
-            --platform=linux/amd64 \
-            --load \
-            .
-          CID=$(docker run -d ${{ env.IMAGE_NAME }}:testing)
-          VER=$(docker exec $CID npm view green-tunnel version 2>/dev/null)
-          docker rm -f $CID
-          echo ::set-output name=app_ver::${VER}
-          echo ::set-output name=github_desc::$(curl -sX GET https://api.github.com/repos/${GITHUB_REPOSITORY} | jq -r .description)
-          echo ::set-output name=github_branch::${GITHUB_REF#refs/heads/}
+          build-args: |
+            ALPINE_VER=${{ env.ALPINE_VER }}
       -
         name: Login to docker.io
         uses: docker/login-action@v1 
@@ -177,10 +157,12 @@ jobs:
           file: Dockerfile
           tags: |
             ${{ env.IMAGE_NAME }}:testing
-            ${{ env.IMAGE_NAME }}:testing-pr-${{ github.event.pull_request.number }}
+            ${{ env.IMAGE_NAME }}:testing-${{ github.event.pull_request.number }}
             ghcr.io/${{ env.IMAGE_NAME }}:testing
-            ghcr.io/${{ env.IMAGE_NAME }}:testing-pr-${{ github.event.pull_request.number }}
+            ghcr.io/${{ env.IMAGE_NAME }}:testing-${{ github.event.pull_request.number }}
           platforms: linux/amd64,linux/arm/v7,linux/arm64
+          build-args: |
+            ALPINE_VER=${{ env.ALPINE_VER }}
           push: true
       -
         name: Notification
@@ -191,6 +173,6 @@ jobs:
           status: ${{ job.status }}
           description: |
             ${{ env.IMAGE_NAME }}:testing
-            ${{ env.IMAGE_NAME }}:testing-pr-${{ github.event.pull_request.number }}
+            ${{ env.IMAGE_NAME }}:testing-${{ github.event.pull_request.number }}
             ghcr.io/${{ env.IMAGE_NAME }}:testing
-            ghcr.io/${{ env.IMAGE_NAME }}:testing-pr-${{ github.event.pull_request.number }}
+            ghcr.io/${{ env.IMAGE_NAME }}:testing-${{ github.event.pull_request.number }}
