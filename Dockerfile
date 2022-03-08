@@ -40,7 +40,6 @@ ENV \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
     TZ=Asia/Seoul \
     GT_ENABLED=true \
-    GT_UPDATE=false \
     PROXY_ENABLED=true
 
 COPY --from=builder /bar/ /
