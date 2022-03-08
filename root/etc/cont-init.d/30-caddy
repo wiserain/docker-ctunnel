@@ -12,7 +12,7 @@ generate_caddyfile() {
     echo "0.0.0.0:${PROXY_PORT:-8008}" > ${CADDYFILE}
 
     echo "forwardproxy {" >> ${CADDYFILE}
-    if [[ ! -z ${PROXY_USER} ]] && [[ ! -z ${PROXY_PASS} ]]; then
+    if [[ -n ${PROXY_USER:-} ]] && [[ -n ${PROXY_PASS:-} ]]; then
         echo "  basicauth ${PROXY_USER} ${PROXY_PASS}" >> ${CADDYFILE}
     fi
     if [[ "${PROBE_RESISTANT}" = true ]]; then

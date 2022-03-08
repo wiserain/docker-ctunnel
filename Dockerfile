@@ -1,5 +1,10 @@
 ARG ALPINE_VER
-FROM golang:1.16-alpine${ALPINE_VER} AS builder
+ARG GOLANG_VER=1.16
+
+# 
+# BUILD
+# 
+FROM golang:${GOLANG_VER}-alpine${ALPINE_VER} AS builder
 
 COPY caddy.go /tmp/caddy/
 
@@ -15,10 +20,17 @@ RUN \
     echo "**** installing caddyserver ****" && \
     go install
 
+RUN \
+    echo "**** install green-tunnel ****" && \
+    apk add npm && \
+    npm i -g --prefix /bar/usr green-tunnel
+
 # add local files
 COPY root/ /bar/
 
-
+# 
+# RELEASE
+# 
 FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VER}
 LABEL maintainer="wiserain"
 LABEL org.opencontainers.image.source https://github.com/wiserain/docker-ctunnel
@@ -35,9 +47,8 @@ COPY --from=builder /bar/ /
 
 # install packages
 RUN \
-    echo "**** install green-tunnel ****" && \
-    apk add --no-cache npm && \
-    npm i -g green-tunnel && \
+    echo "**** install nodejs ****" && \
+    apk add --no-cache nodejs-current && \
     echo "**** install others ****" && \
     apk add --no-cache ca-certificates bash curl && \
     echo "**** permissions ****" && \
