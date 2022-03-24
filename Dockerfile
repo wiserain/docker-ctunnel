@@ -1,19 +1,21 @@
 ARG ALPINE_VER
 ARG GOLANG_VER=1.16
 
+FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VER} AS base
+FROM golang:${GOLANG_VER}-alpine${ALPINE_VER} AS go-builder
+
 # 
 # BUILD
 # 
-FROM golang:${GOLANG_VER}-alpine${ALPINE_VER} AS builder
-
+FROM go-builder AS builder
 COPY caddy.go /tmp/caddy/
 
-ENV GOBIN=/bar/usr/local/bin
+ENV GOBIN=/bar/usr/local/bin \
+    GO111MODULE=on
 
 RUN \
     echo "**** building caddyserver ****" && \
     cd /tmp/caddy && \
-    export GO111MODULE=on && \
     go mod init caddy && \
     go mod tidy && \
     go get github.com/caddyserver/caddy@v1 && \
@@ -31,7 +33,7 @@ COPY root/ /bar/
 # 
 # RELEASE
 # 
-FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VER}
+FROM base
 LABEL maintainer="wiserain"
 LABEL org.opencontainers.image.source https://github.com/wiserain/docker-ctunnel
 

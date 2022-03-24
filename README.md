@@ -48,7 +48,7 @@ forwardproxy {
 
 ## Direct connection to green-tunnel
 
-As green-tunnel is running with ```0.0.0.0:21000```, you can directly access it independently to caddy forward-proxy running at front by publishing your container port ```21000```. It is highly recommended exposing the port for internal use only. 
+As green-tunnel is running with ```0.0.0.0:21000```, you can directly access it independently to caddy forward-proxy running at front by publishing your container port ```21000```. It is highly recommended exposing the port for internal use only.
 
 ## Environment variables
 
